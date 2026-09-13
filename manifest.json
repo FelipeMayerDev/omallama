@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.felipemayerdev.omallama",
+  "name": "Omallama",
+  "version": "0.1.0",
+  "author": "Felipe Mayer",
+  "description": "Ollama in the bar, local or on another machine: start/stop the local server, see downloaded models, what is loaded and how much of its context is in use, and pull new models.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "OmallamaWidget.qml"
+  },
+  "license": "MIT",
+  "barWidget": {
+    "displayName": "Omallama",
+    "description": "Ollama control: server switch, model list, loaded model and context, pull new models.",
+    "category": "System",
+    "aliases": [
+      "ollama",
+      "llm",
+      "ai",
+      "model"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "host": "",
+      "remote": false
+    },
+    "schema": [
+      {
+        "key": "host",
+        "type": "string",
+        "label": "Remote Ollama address",
+        "defaultValue": ""
+      },
+      {
+        "key": "remote",
+        "type": "boolean",
+        "label": "Use the remote server",
+        "defaultValue": false
+      }
+    ]
+  }
+}

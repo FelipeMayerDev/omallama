@@ -1,0 +1,1 @@
+{"models":[{"name":"qwen2.5:7b","model":"qwen2.5:7b","size":5062566870,"digest":"845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e","details":{"parent_model":"","format":"gguf","family":"qwen2","families":["qwen2"],"parameter_size":"7.6B","quantization_level":"Q4_K_M"},"expires_at":"2026-09-13T10:50:37.33685305-03:00","size_vram":0,"context_length":4096}]}

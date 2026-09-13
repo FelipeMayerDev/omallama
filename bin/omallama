@@ -1,0 +1,70 @@
+#!/bin/bash
+# Start and stop Ollama for the logged-in user.
+#
+# Arch's packaged ollama.service runs as the `ollama` system user with
+# OLLAMA_MODELS=/var/lib/ollama, so a server started that way lists none of the
+# models in your ~/.ollama — which is every model you ever pulled from a
+# terminal. So the switch drives a *user* unit by default, writing it on first
+# use, and only touches the system unit when that one is already running.
+
+set -euo pipefail
+
+USER_UNIT="$HOME/.config/systemd/user/ollama.service"
+
+system_active() { systemctl is-active --quiet ollama; }
+user_active() { systemctl --user is-active --quiet ollama; }
+
+write_user_unit() {
+  [[ -f $USER_UNIT ]] && return
+  mkdir -p "$(dirname "$USER_UNIT")"
+  cat > "$USER_UNIT" <<'UNIT'
+[Unit]
+Description=Ollama (per-user, models in ~/.ollama)
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/ollama serve
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
+UNIT
+  systemctl --user daemon-reload
+}
+
+case "${1:-status}" in
+  start)
+    # Something is already on :11434; starting a second server would only fail
+    # to bind. Whoever owns the port keeps it.
+    system_active && exit 0
+    write_user_unit
+    systemctl --user start ollama
+    ;;
+  stop)
+    user_active && systemctl --user stop ollama
+    # Needs polkit, which is why it is last: the user unit is already down.
+    system_active && systemctl stop ollama
+    exit 0
+    ;;
+  rm)
+    # Qt's XMLHttpRequest drops the body on a DELETE and Ollama's delete
+    # endpoint reads the model name from exactly there, so the widget cannot
+    # make this call itself. Host and model are validated before they reach
+    # here; the quoting below is what keeps that guarantee.
+    host="${2:-http://127.0.0.1:11434}"
+    model="${3:?usage: omallama rm <base-url> <model>}"
+    curl -sf -X DELETE "$host/api/delete" \
+      -H 'Content-Type: application/json' \
+      --data "$(printf '{"model":"%s"}' "$model")" >/dev/null
+    ;;
+  status)
+    if user_active; then echo user
+    elif system_active; then echo system
+    else echo stopped; fi
+    ;;
+  *)
+    echo "usage: omallama {start|stop|status|rm <base-url> <model>}" >&2
+    exit 2
+    ;;
+esac
