@@ -27,6 +27,26 @@ ln -s "$PWD" ~/.config/omarchy/plugins/io.github.felipemayerdev.omallama
 
 Then add the widget to the bar from Omarchy's bar settings.
 
+## Remove
+
+```sh
+omarchy plugin remove io.github.felipemayerdev.omallama
+```
+
+That takes the widget out of the bar and deletes the plugin folder. It leaves
+two things behind, both yours to keep or clear: the user unit the switch wrote
+at `~/.config/systemd/user/ollama.service` (`systemctl --user disable --now
+ollama` and delete the file), and your models in `~/.ollama`.
+
+## Requirements
+
+- [Ollama](https://ollama.com) (`sudo pacman -S ollama`, or `ollama-cuda` /
+  `ollama-rocm` for GPU) — only when the server runs on this machine. Pointed
+  at a remote host, the widget needs no local Ollama at all.
+- `curl`, for the one call the shell cannot make itself (see below). It is
+  already on every Omarchy install.
+- `systemd --user`, for the start/stop switch.
+
 ## Note on the context percentage
 
 Ollama reports the context window it *loaded* (`/api/ps` `context_length`), not
