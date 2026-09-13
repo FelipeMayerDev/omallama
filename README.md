@@ -2,6 +2,8 @@
 
 Ollama in the Omarchy bar.
 
+![The Omallama panel](preview.png)
+
 - Talks to Ollama on this machine or on another one, and keeps both: the gear in the panel takes the address of a remote server, and a switch moves between it and the local one without retyping anything. The same two values (`host`, `remote`) are in the widget's bar settings.
 - Pointed at the remote, the panel drops the start/stop switch — systemd does not reach across the network — and says whether the host answers instead. Clearing the address in the gear forgets the remote and leaves you on local.
 - Detects whether `ollama` is installed — if it isn't, the panel says so and stops.
